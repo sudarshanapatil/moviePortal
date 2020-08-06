@@ -1,16 +1,22 @@
-// import { Router, Request, Response } from 'express';
 
-// const admin: Router = Router();
 var express = require('express')
 var router = express.Router()
+const adminModel = require('../models/admin');
 
-router.use(function timeLog (req, res, next) {
+router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now())
     next()
-  })
+})
 
-router.get('/', (req, res) => {
-    res.send('Admin Route');
+router.get('/getall', async (req, res) => {
+    let data = await adminModel.getAll();
+    res.send(data);
+});
+
+router.post('/add', async (req, res) => {
+    console.log(req.body, "in api");
+    let data = await adminModel.add(req.body);
+    res.send(data);
 });
 
 router.post('/login', (req, res) => {
@@ -23,4 +29,4 @@ router.post('/login', (req, res) => {
     });
 });
 
-// export default admin;
+module.exports = router;
