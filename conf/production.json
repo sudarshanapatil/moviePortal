@@ -1,0 +1,10 @@
+{
+    "mongo": {
+      "host": "mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority",
+      "port": 27017,
+      "db": "movieDataset"
+    },
+    "api": {
+      "port": 4000
+    }
+  }

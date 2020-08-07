@@ -1,8 +1,12 @@
 var uniqid = require('uniqid');
 const csv = require('csv-parser');
 const fs = require('fs');
+
 var mongoose = require('mongoose');
-var mongoDB = 'mongodb://127.0.0.1/movieDataset';
+//For local
+ var mongoDB = 'mongodb://127.0.0.1/movieDataset';
+//For cloud
+// var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
@@ -52,9 +56,9 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 		console.log(movieData.length, "movie")
 		try {
 			await Movie.insertMany(movieData)
-			console.log("inserted")
+			console.log("inserted successfully!");
 		} catch (error) {
-			console.log("error in inserting")
+			console.log("error in inserting");
 		}
 	})
 
