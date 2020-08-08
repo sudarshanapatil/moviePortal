@@ -2,7 +2,7 @@
 var express = require('express')
 var router = express.Router()
 
-const userModel = require('../models/user');
+const userModel = require('../models/movie');
 console.log(userModel, "user")
 
 router.use((req, res, next) => {
