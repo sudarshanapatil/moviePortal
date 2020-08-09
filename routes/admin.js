@@ -2,45 +2,56 @@ const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin');
 const Movie = require('../models/movie');
+const Logs=require('../models/log');
 const Base64 = require('../util/base64');
-
+console.log("in admin routes for movie", Movie)
+console.log("in admin routes for admin", Admin)
+const ChangeLog = require('../schema/changeLogSchema')
 const tokenSecret = "movieportal";
 
-router.get('/getall', verifyToken, logData, async function (req, res) {
+router.get('/getall', logData, async function (req, res) {
   let data = await Movie.getAll();
-  res.send(data);
+  res.send({ code: 200, data });
 });
 
-router.post('/add', verifyToken, logData, async function (req, res) {
+router.get('/getlogs', logData, async function (req, res) {
+  let data = await Logs.find();
+  res.send({ code: 200, data });
+});
+
+router.post('/add', logData, async function (req, res) {
   let data = await Movie.add(req.body);
-  res.send(data);
+  res.send({ code: 200, data });
 });
 
-router.post('/update', verifyToken, logData, async function (req, res) {
-  res.send({message: "Update API"});
+router.post('/update', logData, async function (req, res) {
+  let data = await Movie.edit(req.body);
+  res.send({ code: 200, message: "Update API" });
 });
 
-router.post('/delete', verifyToken, logData, async function (req, res) {
-  res.send({message: "Delete API"});
+router.post('/delete', logData, async function (req, res) {
+  let data = await Movie.remove(req.body.id);
+  res.send({ code: 200, message: "Delete API" });
 });
 
 router.post('/login', async (req, res) => {
   try {
     let { username, password } = req.body;
     password = Base64.encode(password);
-    await Movie.find({username, password})
-    jwt.sign({user}, tokenSecret, {expiresIn: "24h"}, function (err, token) {
+    let user = await Admin.find(username, password)
+    jwt.sign({ user }, tokenSecret, { expiresIn: "24h" }, function (err, token) {
       if (err) {
         res.json({
           message: "Error in authentication"
         });
       } else {
         res.json({
+          code: 200,
           token,
         });
       }
     });
-  } catch(err) {
+  } catch (err) {
     res.sendStatus(401);
   }
 });
@@ -48,25 +59,28 @@ router.post('/login', async (req, res) => {
 // Verify token
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers['authorization'];
-  if (typeof bearerHeader !== undefined) {
+  if (typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(' ');
     const bearerToken = bearer[1];
     jwt.verify(bearerToken, tokenSecret, function (err, data) {
       if (err) {
         res.sendStatus(403);
       } else {
-        req.user = data.user.username;
+        req.user = data.username;
         next();
       }
     });
   } else {
-    res.sendStatus(403);
+    res.sendStatus(405);
   }
 }
 
 // Log data
 function logData(req, res, next) {
   console.log(req.url, Date.now, req.user);
+  let log = ChangeLog({ username: "admin", time: Date.now(), apiUrl: req.url });
+  let data = log.save();
+
   next();
 }
 

@@ -4,7 +4,7 @@ const fs = require('fs');
 
 var mongoose = require('mongoose');
 //For local
- var mongoDB = 'mongodb://127.0.0.1/movieDataset';
+var mongoDB = 'mongodb://127.0.0.1/movieDataset';
 //For cloud
 // var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -30,6 +30,7 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 		results.push(data)
 	})
 	.on('end', async () => {
+		let count = 1;
 		results = results.slice(0, 50)
 		let movieData = results.map(movieItem => {
 			let actors = [];
@@ -40,7 +41,8 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 				actors.push(movieItem['actor_2_name']);
 			if (movieItem['actor_3_name'])
 				actors.push(movieItem['actor_3_name']);
-
+			if (count > 10)
+				count = 1
 			return {
 				contentId: uniqid(),
 				movieName: movieItem['movie_title'],
@@ -51,11 +53,13 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 				actors: actors,
 				language: movieItem['language'],
 				duration: movieItem['duration'],
+				imageUrl: `../images/banner${count++}.jpg`
 			}
+
 		})
-		console.log(movieData.length, "movie")
+		console.log(movieData, "movie")
 		try {
-			await Movie.insertMany(movieData)
+			// await Movie.insertMany(movieData)
 			console.log("inserted successfully!");
 		} catch (error) {
 			console.log("error in inserting");

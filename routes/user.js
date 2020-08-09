@@ -1,29 +1,24 @@
-
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 
 const userModel = require('../models/movie');
-console.log(userModel, "user")
+console.log("in movies routes" ,userModel)
 
-router.use((req, res, next) => {
-    console.log('Time: ', Date.now())
-    next()
-})
 
-router.get('/getall', async (req, res) => {
-    let data = await userModel.getAll();
-    res.send(data);
-});
+
+// router.use((req, res, next) => {
+// 	console.log('Time: ', Date.now());
+// 	next();
+// })
+
+// router.get('/getall', async (req, res) => {
+// 	let data = await userModel.getAll();
+// 	res.send(data);
+// });
 
 router.post('/filter', async (req, res) => {
-    let data
-    if (req.body.searchText)
-        data = await userModel.search(req.body.searchText);
-    else if (req.body.sort)
-        data = await userModel.sort(req.body.sort);
-    else
-        data = await userModel.sort(req.body.filter);
-    res.send(data);
+	let data = await userModel.filter(req.body);
+	res.send(data);
 });
 
 module.exports = router;
