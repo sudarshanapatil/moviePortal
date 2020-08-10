@@ -72,7 +72,6 @@ module.exports.add = (addData) => {
         reject({ code: 402 })
       }
       else {
-        conso
         resolve(movieData);
       }
     });
