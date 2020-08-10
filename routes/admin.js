@@ -2,35 +2,41 @@ const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin');
 const Movie = require('../models/movie');
-const Logs=require('../models/log');
+const Logs = require('../models/log');
 const Base64 = require('../util/base64');
-console.log("in admin routes for movie", Movie)
-console.log("in admin routes for admin", Admin)
 const ChangeLog = require('../schema/changeLogSchema')
 const tokenSecret = "movieportal";
 
-router.get('/getall', logData, async function (req, res) {
+router.get('/getall', verifyToken, logData, async function (req, res) {
   let data = await Movie.getAll();
   res.send({ code: 200, data });
 });
 
-router.get('/getlogs', logData, async function (req, res) {
+router.get('/getlogs', verifyToken, logData, async function (req, res) {
   let data = await Logs.find();
   res.send({ code: 200, data });
 });
 
-router.post('/add', logData, async function (req, res) {
-  let data = await Movie.add(req.body);
-  res.send({ code: 200, data });
+router.post('/add', verifyToken, logData, async function (req, res) {
+  try {
+    let data = await Movie.add(req.body);
+    res.send({ code: 200, data });
+  } catch (error) {
+    res.send({ code: 400, error });
+  }
 });
 
-router.post('/update', logData, async function (req, res) {
-  let data = await Movie.edit(req.body);
-  res.send({ code: 200, message: "Update API" });
+router.post('/update', verifyToken, logData, async function (req, res) {
+  try {
+    await Movie.edit(req.body);
+    res.send({ code: 200, message: "Update API" });
+  } catch (error) {
+    res.send({ code: 400, error });
+  }
 });
 
-router.post('/delete', logData, async function (req, res) {
-  let data = await Movie.remove(req.body.id);
+router.post('/delete', verifyToken, logData, async function (req, res) {
+  await Movie.remove(req.body.id);
   res.send({ code: 200, message: "Delete API" });
 });
 
@@ -78,9 +84,10 @@ function verifyToken(req, res, next) {
 // Log data
 function logData(req, res, next) {
   console.log(req.url, Date.now, req.user);
-  let log = ChangeLog({ username: "admin", time: Date.now(), apiUrl: req.url });
-  let data = log.save();
-
+  if (req.url !== '/getlogs') {
+    let log = ChangeLog({ username: "admin", time: Date.now(), apiUrl: req.url });
+    log.save();
+  }
   next();
 }
 

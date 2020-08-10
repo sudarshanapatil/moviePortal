@@ -4,24 +4,24 @@ const fs = require('fs');
 
 var mongoose = require('mongoose');
 //For local
-var mongoDB = 'mongodb://127.0.0.1/movieDataset';
+// var mongoDB = 'mongodb://127.0.0.1/movieDataset';
 //For cloud
-// var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
+var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
-var movieSchema = new Schema({
+
+const movieSchema = new Schema({
 	contentId: { type: String, required: false },
 	movieName: { type: String, required: true },
 	director: { type: String },
-	rating: { type: String },
+	rating: { type: Number },
 	genres: { type: Array },
-	releaseYear: { type: String },
+	releaseYear: { type: Number },
 	actors: { type: Array },
 	language: { type: String },
 	duration: { type: String },
-
-})
+});
 var Movie = mongoose.model('Movie', movieSchema);
 let results = [];
 fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
@@ -30,8 +30,8 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 		results.push(data)
 	})
 	.on('end', async () => {
-		let count = 1;
-		results = results.slice(0, 50)
+		let count = 0;
+		results = results.slice(0, 200)
 		let movieData = results.map(movieItem => {
 			let actors = [];
 			let genres = movieItem.genres.split("|");
@@ -43,6 +43,7 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 				actors.push(movieItem['actor_3_name']);
 			if (count > 10)
 				count = 1
+			count++;
 			return {
 				contentId: uniqid(),
 				movieName: movieItem['movie_title'],
@@ -53,13 +54,16 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 				actors: actors,
 				language: movieItem['language'],
 				duration: movieItem['duration'],
-				imageUrl: `../images/banner${count++}.jpg`
+				imageUrl: `movie${count}.jpg`,
+				bannerUrl: `banner${count}.jpg`,
 			}
+
 
 		})
 		console.log(movieData, "movie")
 		try {
-			// await Movie.insertMany(movieData)
+			await Movie.insertMany(movieData)
+			// await Movie.deleteMany()
 			console.log("inserted successfully!");
 		} catch (error) {
 			console.log("error in inserting");

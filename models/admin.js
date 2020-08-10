@@ -9,7 +9,6 @@ module.exports.find = async function (username, password) {
       throw new Error("No such user");
     }
   } catch (err) {
-    console.error("Error :", err);
     throw new Error("User not found");
   }
 } 

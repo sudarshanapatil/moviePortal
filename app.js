@@ -5,14 +5,10 @@ var app = express();
 const adminRoute = require('./routes/admin');
 const userRoutes = require('./routes/user');
 
-// console.log(userRoutes,"routes")
-// app.use(bodyParser.urlencoded());
-
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-// app.use(json());
+	extended: true
+}));
+app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/admin', adminRoute);
