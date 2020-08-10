@@ -72,7 +72,7 @@ function verifyToken(req, res, next) {
       if (err) {
         res.sendStatus(403);
       } else {
-        req.user = data.username;
+        req.user = data.user.username;
         next();
       }
     });
