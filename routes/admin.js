@@ -85,7 +85,7 @@ function verifyToken(req, res, next) {
 function logData(req, res, next) {
   console.log(req.url, Date.now, req.user);
   if (req.url !== '/getlogs') {
-    let log = ChangeLog({ username: "admin", time: Date.now(), apiUrl: req.url });
+    let log = ChangeLog({ username: req.user, time: Date.now(), apiUrl: req.url });
     log.save();
   }
   next();
