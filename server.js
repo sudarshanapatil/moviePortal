@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const app = require('./app')
 const conf = require('./conf/development.json');
 const { api, mongo } = conf;
-const API_SERVER_PORT = api.port;
+const API_SERVER_PORT = api.port || process.env.port;;
 
 const DB_URI = `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
 
