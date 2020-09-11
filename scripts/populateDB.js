@@ -1,12 +1,12 @@
 var uniqid = require('uniqid');
 const csv = require('csv-parser');
 const fs = require('fs');
-
 var mongoose = require('mongoose');
 //For local
 // var mongoDB = 'mongodb://127.0.0.1/movieDataset';
 //For cloud
-var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
+var mongoDB = `mongodb+srv://sudarshana:sudri@123@movies.7cpna.mongodb.net/movies?retryWrites=true&w=majority`
+// var mongoDB = 'mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
@@ -24,7 +24,7 @@ const movieSchema = new Schema({
 });
 var Movie = mongoose.model('Movie', movieSchema);
 let results = [];
-fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
+fs.createReadStream('./movie_metadata.csv')
 	.pipe(csv())
 	.on('data', (data) => {
 		results.push(data)
@@ -60,7 +60,7 @@ fs.createReadStream('/home/sudarshana/Desktop/movie_metadata.csv')
 
 
 		})
-		console.log(movieData, "movie")
+		// console.log(movieData, "movie")
 		try {
 			await Movie.insertMany(movieData)
 			// await Movie.deleteMany()
