@@ -6,7 +6,8 @@ var mongoose = require('mongoose');
 //For local
 // var mongoDB = 'mongodb://127.0.0.1/movieDataset';
 //For cloud
-var mongoDB='mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
+var mongoDB ='mongodb+srv://sudarshana:sudri@123@movies.7cpna.mongodb.net/movies?retryWrites=true&w=majority';
+// var mongoDB = 'mongodb+srv://sudarshana:sudri@123@movies.5aua6.mongodb.net/movieDataset?retryWrites=true&w=majority'
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
